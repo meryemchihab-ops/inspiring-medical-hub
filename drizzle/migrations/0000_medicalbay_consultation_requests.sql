@@ -1,0 +1,10 @@
+CREATE TABLE public.consultation_requests (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), created_at timestamptz NOT NULL DEFAULT now(), first_name text NOT NULL, phone text NOT NULL, treatment text NOT NULL, preferred_month text, language text NOT NULL DEFAULT 'fr', attribution jsonb NOT NULL DEFAULT '{}'::jsonb, consent boolean NOT NULL DEFAULT true, attachment_path text);
+GRANT ALL ON public.consultation_requests TO service_role;
+ALTER TABLE public.consultation_requests ENABLE ROW LEVEL SECURITY;
+CREATE INDEX consultation_requests_phone_created ON public.consultation_requests(phone, created_at);
+CREATE TABLE public.consultation_rate_limits (key text PRIMARY KEY, hits integer NOT NULL DEFAULT 1, window_start timestamptz NOT NULL DEFAULT now());
+GRANT ALL ON public.consultation_rate_limits TO service_role;
+ALTER TABLE public.consultation_rate_limits ENABLE ROW LEVEL SECURITY;
+CREATE OR REPLACE FUNCTION public.check_consultation_rate(p_key text) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$ DECLARE n integer; BEGIN INSERT INTO public.consultation_rate_limits(key) VALUES(p_key) ON CONFLICT(key) DO UPDATE SET hits = CASE WHEN consultation_rate_limits.window_start < now() - interval '1 hour' THEN 1 ELSE consultation_rate_limits.hits + 1 END, window_start = CASE WHEN consultation_rate_limits.window_start < now() - interval '1 hour' THEN now() ELSE consultation_rate_limits.window_start END RETURNING hits INTO n; RETURN n <= 5; END; $$;
+REVOKE ALL ON FUNCTION public.check_consultation_rate(text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.check_consultation_rate(text) TO service_role;
