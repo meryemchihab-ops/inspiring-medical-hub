@@ -7,7 +7,6 @@ const ANCHORS = ["#soins", "#sejour", "#parcours", "#faq"];
 export function Footer({ c, onLegal }: { c: Copy; onLegal: () => void }) {
   return (
     <footer className="footer deco-host">
-      <div className="footer-skyline" aria-hidden="true" />
       <Deco src={pebbles} name="pebbles" w={800} h={800} />
       <div className="container-wide">
         <div className="footer-main">
