@@ -14,13 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      consultation_rate_limits: {
+        Row: {
+          hits: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          hits?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          hits?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      consultation_requests: {
+        Row: {
+          attachment_path: string | null
+          attribution: Json
+          consent: boolean
+          created_at: string
+          first_name: string
+          id: string
+          language: string
+          phone: string
+          preferred_month: string | null
+          treatment: string
+        }
+        Insert: {
+          attachment_path?: string | null
+          attribution?: Json
+          consent?: boolean
+          created_at?: string
+          first_name: string
+          id?: string
+          language?: string
+          phone: string
+          preferred_month?: string | null
+          treatment: string
+        }
+        Update: {
+          attachment_path?: string | null
+          attribution?: Json
+          consent?: boolean
+          created_at?: string
+          first_name?: string
+          id?: string
+          language?: string
+          phone?: string
+          preferred_month?: string | null
+          treatment?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_consultation_rate: { Args: { p_key: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
