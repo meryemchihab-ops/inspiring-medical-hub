@@ -9,10 +9,8 @@ import aligneurs from "@/assets/treatments/6-aligneurs.webp";
 import blanchiment from "@/assets/treatments/7-blanchiment.webp";
 import { Cta } from "./shared";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import { scrollToY } from "@/lib/smooth-scroll";
 import type { Copy } from "@/content/types";
 
-const HEADER_HEIGHT = 91;
 // One illustration per treatment, in the same order as the content items.
 const ILLUSTRATIONS = [facettes, implants, smileDesign, zirconium, ceramique, aligneurs, blanchiment];
 
@@ -29,7 +27,6 @@ export function Treatments({ c }: { c: Copy }) {
   const [open, setOpen] = useState(0);
   const t = c.treatments;
   const root = useRef<HTMLElement>(null);
-  const pin = useRef<ScrollTrigger | null>(null);
 
   useGSAP(
     () => {
@@ -66,36 +63,26 @@ export function Treatments({ c }: { c: Copy }) {
           },
         );
       });
-      // Desktop: the section pins briefly and scroll drives the active treatment and its illustration.
+      // Desktop: as the section scrolls through the screen, scroll drives the active treatment
+      // and its photo. No pinning, so the page never freezes on a half-empty screen.
       mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        const st = ScrollTrigger.create({
+        ScrollTrigger.create({
           trigger: ".treatment-stage",
-          start: `top ${HEADER_HEIGHT}px`,
-          end: () => `+=${Math.round(window.innerHeight * 1.2)}`,
-          pin: true,
-          anticipatePin: 1,
+          start: "top 80%",
+          end: "bottom 80%",
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             follow(self.progress);
             setOpen(Math.min(count - 1, Math.floor(self.progress * count)));
           },
         });
-        pin.current = st;
-        return () => {
-          pin.current = null;
-        };
       });
       return () => mm.revert();
     },
     { scope: root },
   );
 
-  const select = (i: number) => {
-    const st = pin.current;
-    if (!st) return setOpen(open === i ? -1 : i);
-    // Pinned: jump to the middle of that treatment's slice of the scroll.
-    scrollToY(st.start + ((i + 0.5) / t.items.length) * (st.end - st.start));
-  };
+  const select = (i: number) => setOpen(open === i ? -1 : i);
 
   return (
     <section id="soins" ref={root} aria-labelledby="treatments-title">
