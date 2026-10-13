@@ -8,7 +8,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import deco13 from "@/assets/deco/deco-13.webp";
-import { Deco } from "./shared";
+import { Deco, WHATSAPP } from "./shared";
 import { Button } from "@/components/ui/button";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
@@ -19,11 +19,11 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
   const root = useRef<HTMLElement>(null);
   useScrollReveal(root, ".booking-copy > *", { y: 36, tilt: false, stagger: 0.08 });
   useScrollReveal(root, ".booking-form", { y: 56, tilt: false });
-  const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [started, setStarted] = useState(false);
-  async function send(e: FormEvent<HTMLFormElement>) {
+  const [waLink, setWaLink] = useState(WHATSAPP);
+  function send(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     const fd = new FormData(e.currentTarget);
@@ -32,32 +32,51 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
       setError(c.booking.treatmentError);
       return;
     }
-    setBusy(true);
-    try {
-      await submit({
-        data: {
-          first_name: String(fd.get("first_name")),
-          phone: String(fd.get("dial")) + String(fd.get("phone")),
-          treatment: treatments.join(", "),
-          preferred_month: String(fd.get("month")),
-          language: c.language,
-          consent: true,
-          attribution: getAttribution(),
-          website: String(fd.get("website") ?? ""),
-        },
-      });
-      setSuccess(true);
-      track("form_submit", { section: "reserver", lang: c.language });
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}${window.location.search}#merci`,
-      );
-    } catch {
-      setError(c.booking.error);
-    } finally {
-      setBusy(false);
-    }
+    const firstName = String(fd.get("first_name")).trim();
+    // "06 12 34 56 78" with +33 becomes "+33612345678", the international form WhatsApp expects.
+    const phone = String(fd.get("dial")) + String(fd.get("phone")).replace(/\D/g, "").replace(/^0+/, "");
+    const month = String(fd.get("month"));
+    const L = c.booking.waLabels;
+    const sep = c.language === "fr" ? " : " : ": ";
+    const date = month
+      ? new Date(`${month}T00:00`).toLocaleDateString(c.language === "fr" ? "fr-FR" : "en-GB", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "";
+    const text = [
+      c.booking.waIntro,
+      "",
+      `${L.name}${sep}${firstName}`,
+      `${L.phone}${sep}${phone}`,
+      `${L.treatments}${sep}${treatments.join(", ")}`,
+      ...(date ? [`${L.date}${sep}${date}`] : []),
+    ].join("\n");
+    const link = `${WHATSAPP}?text=${encodeURIComponent(text)}`;
+    // Opened inside the submit handler itself so browsers treat it as user-initiated and do not block it.
+    window.open(link, "_blank", "noopener");
+    setWaLink(link);
+    setSuccess(true);
+    track("form_submit", { section: "reserver", lang: c.language });
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${window.location.search}#merci`,
+    );
+    // Backup copy for the team (stored and emailed) in case the visitor never presses Send in WhatsApp.
+    submit({
+      data: {
+        first_name: firstName,
+        phone,
+        treatment: treatments.join(", "),
+        preferred_month: month,
+        language: c.language,
+        consent: true,
+        attribution: getAttribution(),
+        website: String(fd.get("website") ?? ""),
+      },
+    }).catch((err: unknown) => console.error("Consultation backup failed", err));
   }
   return (
     <section
@@ -109,13 +128,9 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
               <h3>{c.booking.success}</h3>
               <p>{c.booking.successDetail}</p>
               <Button asChild variant="brand">
-                <a
-                  href={`https://wa.me/212668686800?text=${encodeURIComponent(c.language === "fr" ? "Bonjour Medical Bay, je viens d’envoyer ma demande." : "Hello Medical Bay, I just sent my request.")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href={waLink} target="_blank" rel="noreferrer">
                   <MessageCircle />
-                  {c.whatsapp}
+                  {c.booking.waSend}
                 </a>
               </Button>
             </div>
@@ -222,9 +237,9 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                     {error}
                   </p>
                 )}
-                <Button type="submit" variant="brand" disabled={busy}>
-                  {busy ? c.booking.submitting : c.booking.submit}
-                  <ArrowUpRight />
+                <Button type="submit" variant="brand">
+                  <MessageCircle />
+                  {c.booking.submit}
                 </Button>
                 <div className="form-footnote">
                   <LockKeyhole />

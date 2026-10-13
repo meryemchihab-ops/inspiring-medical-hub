@@ -11,7 +11,7 @@ export interface Copy {
  packs:{label:string;title:string;accent:string;intro:string;price:string;badge:string;cta:string;features:string[];items:{name:string;description:string}[];compare:string;condition:string};
  assurance:{quote:string;byline:string;cta:string};
  faq:{label:string;title:string;accent:string;intro:string;cta:string;items:{q:string;a:string}[]};
- booking:{label:string;title:string;accent:string;intro:string;coordinator:string;next:string[];formTitle:string;formIntro:string;name:string;phone:string;treatment:string;select:string;treatmentError:string;month:string;consent:string;submit:string;submitting:string;secure:string;success:string;successDetail:string;error:string};
+ booking:{label:string;title:string;accent:string;intro:string;coordinator:string;next:string[];formTitle:string;formIntro:string;name:string;phone:string;treatment:string;select:string;treatmentError:string;month:string;consent:string;submit:string;secure:string;success:string;successDetail:string;error:string;waIntro:string;waLabels:{name:string;phone:string;treatments:string;date:string};waSend:string};
  footer:{slogan:string;mapTitle:string;mapOpen:string;contact:string;address:string;explore:string;legal:string[];copyright:string;updated:string;illustrations:string};
  consent:{text:string;accept:string;reject:string}; offer:{title:string;text:string;cta:string;close:string};
  legal:{title:string;sections:{title:string;text:string}[]};
