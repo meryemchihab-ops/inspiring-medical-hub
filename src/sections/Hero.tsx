@@ -10,7 +10,7 @@ import {
 import { useRef, type CSSProperties } from "react";
 import heroArt from "@/assets/hero-illustration.webp";
 import stamp from "@/assets/agadir-stamp.webp";
-import { Cta, GOOGLE_PLACE, GOOGLE_RATING, GOOGLE_REVIEW_COUNT, WHATSAPP } from "./shared";
+import { Cta, GOOGLE_RATING, GOOGLE_REVIEWS, GOOGLE_REVIEW_COUNT, WHATSAPP } from "./shared";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { track } from "@/lib/marketing";
 import type { Copy } from "@/content/types";
@@ -154,7 +154,7 @@ export function Hero({ c }: { c: Copy }) {
             </div>
             <a
               className="google-badge"
-              href={GOOGLE_PLACE}
+              href={GOOGLE_REVIEWS}
               target="_blank"
               rel="noreferrer"
               data-hero-in
