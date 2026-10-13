@@ -1,7 +1,7 @@
 export type Language = 'fr' | 'en';
 export interface Copy {
  language: Language; meta: {title:string;description:string}; nav:string[]; quote:string; whatsapp:string; noCommitment:string; skip:string;
- hero:{label:string;lines:string[];accent:string;description:string;cta:string;response:string;scroll:string;location:string};
+ hero:{label:string;lines:string[];accent:string;description:string;cta:string;response:string;location:string};
  trust:{title:string;detail:string}[];
  treatments:{label:string;title:string;accent:string;intro:string;popular:string;items:{name:string;tagline:string;description:string}[];cta:string;caption:string;note:string};
  prices:{label:string;title:string;accent:string;intro:string;upTo:string;saving:string;cta:string;europe:string;morocco:string;footnote:string;source:string;rows:{name:string;eu:string;ma:string;ratio:number}[]};

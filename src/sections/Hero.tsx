@@ -6,7 +6,6 @@ import {
   UserCheck,
   Hotel,
   CheckCircle2,
-  ArrowDown,
 } from "lucide-react";
 import { useRef } from "react";
 import heroArt from "@/assets/hero-illustration.webp";
@@ -158,10 +157,6 @@ export function Hero({ c }: { c: Copy }) {
         <div className="photo-note">
           <MapPin size={14} />
           {c.footer.address}
-        </div>
-        <div className="scroll-note">
-          <ArrowDown size={12} />
-          {c.hero.scroll}
         </div>
       </section>
       <section className="trust-strip" aria-label={c.trust[0]?.title}>
