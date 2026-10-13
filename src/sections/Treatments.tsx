@@ -8,7 +8,7 @@ import ceramique from "@/assets/treatments/5-couronnes-ceramique.webp";
 import aligneurs from "@/assets/treatments/6-aligneurs.webp";
 import blanchiment from "@/assets/treatments/7-blanchiment.webp";
 import { Cta } from "./shared";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import type { Copy } from "@/content/types";
 
 // One illustration per treatment, in the same order as the content items.
@@ -30,21 +30,6 @@ export function Treatments({ c }: { c: Copy }) {
 
   useGSAP(
     () => {
-      const bar = root.current!.querySelector<HTMLElement>(".treatment-progress span")!;
-      const count = t.items.length;
-      const progress = { value: 0 };
-      // Ease the progress bar towards the scroll position instead of jumping.
-      const follow = (value: number) =>
-        gsap.to(progress, {
-          value,
-          duration: 0.5,
-          ease: "power2.out",
-          overwrite: true,
-          onUpdate: () => {
-            bar.style.transform = `scaleX(${progress.value})`;
-          },
-        });
-
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
@@ -62,20 +47,6 @@ export function Treatments({ c }: { c: Copy }) {
             },
           },
         );
-      });
-      // Desktop: as the section scrolls through the screen, scroll drives the active treatment
-      // and its photo. No pinning, so the page never freezes on a half-empty screen.
-      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
-        ScrollTrigger.create({
-          trigger: ".treatment-stage",
-          start: "top 80%",
-          end: "bottom 80%",
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            follow(self.progress);
-            setOpen(Math.min(count - 1, Math.floor(self.progress * count)));
-          },
-        });
       });
       return () => mm.revert();
     },
@@ -155,9 +126,6 @@ export function Treatments({ c }: { c: Copy }) {
           <div className="visual-caption">
             <p className="serif">{t.caption}</p>
           </div>
-        </div>
-        <div className="treatment-progress" aria-hidden="true">
-          <span />
         </div>
       </div>
     </section>
