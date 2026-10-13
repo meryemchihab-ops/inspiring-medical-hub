@@ -80,7 +80,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
             <UserRound />
             <div>
               {c.booking.coordinator}
-              <div className="mt-2 flex items-center gap-2 text-[10px] text-teal-deep">
+              <div className="mt-2 flex items-center gap-2 text-[13px] text-teal-deep">
                 <span className="live-dot" />
                 {c.hero.response}
               </div>
@@ -168,7 +168,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                         type="tel"
                         autoComplete="tel-national"
                         required
-                        pattern="[0-9 ()-]{7,18}"
+                        pattern="[0-9 \(\)\-]{7,18}"
                         placeholder="6 12 34 56 78"
                       />
                     </div>
@@ -211,7 +211,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                       type="button"
                       variant="link"
                       onClick={onLegal}
-                      className="h-auto p-0 text-[10px]"
+                      className="h-auto p-0 text-[13px]"
                     >
                       {c.footer.legal[1]}
                     </Button>

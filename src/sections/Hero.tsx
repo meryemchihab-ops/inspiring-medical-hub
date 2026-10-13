@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 import heroArt from "@/assets/hero-illustration.webp";
+import stamp from "@/assets/agadir-stamp.webp";
 import { Cta, WHATSAPP } from "./shared";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { track } from "@/lib/marketing";
@@ -91,9 +92,17 @@ export function Hero({ c }: { c: Copy }) {
           </div>
         </div>
         <div className="location-stamp" aria-hidden="true">
-          <small>AGADIR</small>
-          <span className="serif">Maroc</span>
-          <small>{c.hero.location}</small>
+          <img src={stamp} alt="" width={400} height={400} />
+          <svg viewBox="0 0 100 100" className="stamp-ring">
+            <defs>
+              <path id="stamp-circle" d="M50 50 m-42.5 0 a42.5 42.5 0 1 1 85 0 a42.5 42.5 0 1 1 -85 0" />
+            </defs>
+            <text>
+              <textPath href="#stamp-circle" textLength={265} lengthAdjust="spacing">
+                {`MEDICAL BAY · AGADIR · ${c.hero.location} · `}
+              </textPath>
+            </text>
+          </svg>
         </div>
         <div className="container-wide hero-content">
           <div className="hero-text">

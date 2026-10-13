@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
 import { Cta } from "./shared";
 import logoMark from "@/assets/logo-mark.png";
 import type { Copy } from "@/content/types";
-const ANCHORS = ["#soins", "#sejour", "#parcours", "#faq"];
+const ANCHORS = ["#soins", "#parcours", "#faq"];
 export function Header({ c }: { c: Copy }) {
   const [open, setOpen] = useState(false);
   return (
