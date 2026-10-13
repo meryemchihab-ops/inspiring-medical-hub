@@ -8,9 +8,11 @@ import ceramique from "@/assets/treatments/5-couronnes-ceramique.webp";
 import aligneurs from "@/assets/treatments/6-aligneurs.webp";
 import blanchiment from "@/assets/treatments/7-blanchiment.webp";
 import { Cta } from "./shared";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { scrollToY } from "@/lib/smooth-scroll";
 import type { Copy } from "@/content/types";
 
+const HEADER_HEIGHT = 91;
 // One illustration per treatment, in the same order as the content items.
 const ILLUSTRATIONS = [facettes, implants, smileDesign, zirconium, ceramique, aligneurs, blanchiment];
 
@@ -27,9 +29,25 @@ export function Treatments({ c }: { c: Copy }) {
   const [open, setOpen] = useState(0);
   const t = c.treatments;
   const root = useRef<HTMLElement>(null);
+  const pin = useRef<ScrollTrigger | null>(null);
 
   useGSAP(
     () => {
+      const bar = root.current!.querySelector<HTMLElement>(".treatment-progress span")!;
+      const count = t.items.length;
+      const progress = { value: 0 };
+      // Ease the progress bar towards the scroll position instead of jumping.
+      const follow = (value: number) =>
+        gsap.to(progress, {
+          value,
+          duration: 0.5,
+          ease: "power2.out",
+          overwrite: true,
+          onUpdate: () => {
+            bar.style.transform = `scaleX(${progress.value})`;
+          },
+        });
+
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
@@ -48,12 +66,37 @@ export function Treatments({ c }: { c: Copy }) {
           },
         );
       });
+      // Desktop: the section stays on screen for a long scroll (about 40% of a screen per
+      // treatment) while scroll steps through the treatments and their photos.
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const st = ScrollTrigger.create({
+          trigger: ".treatment-stage",
+          start: `top ${HEADER_HEIGHT}px`,
+          end: () => `+=${Math.round(window.innerHeight * 0.4 * count)}`,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            follow(self.progress);
+            setOpen(Math.min(count - 1, Math.floor(self.progress * count)));
+          },
+        });
+        pin.current = st;
+        return () => {
+          pin.current = null;
+        };
+      });
       return () => mm.revert();
     },
     { scope: root },
   );
 
-  const select = (i: number) => setOpen(open === i ? -1 : i);
+  const select = (i: number) => {
+    const st = pin.current;
+    if (!st) return setOpen(open === i ? -1 : i);
+    // Pinned: jump to the middle of that treatment's slice of the scroll.
+    scrollToY(st.start + ((i + 0.5) / t.items.length) * (st.end - st.start));
+  };
 
   return (
     <section id="soins" ref={root} aria-labelledby="treatments-title">
@@ -126,6 +169,9 @@ export function Treatments({ c }: { c: Copy }) {
           <div className="visual-caption">
             <p className="serif">{t.caption}</p>
           </div>
+        </div>
+        <div className="treatment-progress" aria-hidden="true">
+          <span />
         </div>
       </div>
     </section>

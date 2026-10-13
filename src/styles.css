@@ -271,7 +271,10 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 /* Desktop hero grows with its content (long headlines, the reviews badge) instead of clipping it. */
 @media(min-width:1024px){.hero{height:auto;max-height:none;min-height:clamp(540px,calc(100svh - 260px),660px);display:flex;flex-direction:column}.hero-content{flex:1;height:auto}.hero-text{padding-block:40px}}
 /* Treatments start right under the trust strip instead of floating in the middle of the pinned stage. */
-@media(min-width:1024px){.treatment-stage{align-items:flex-start;padding-block:40px 32px;height:auto;min-height:0}}
+@media(min-width:1024px){.treatment-stage{align-items:flex-start;padding-block:40px 32px;height:auto;min-height:calc(100svh - 91px)}}
 @media(min-width:640px) and (max-width:1023px){.treatment-stage{padding-block:56px}}
 @media(max-width:639px){.treatment-stage{padding-block:44px}}
 @media(min-width:1024px) and (max-width:1366px){.treatment-visual{width:min(40vw,500px)}}
+/* Progress bar under the pinned treatments stage (desktop). */
+.treatment-progress{display:none}
+@media(min-width:1024px){.treatment-progress{display:block;position:absolute;inset:auto 0 0;height:3px;background:var(--border)}.treatment-progress span{display:block;height:100%;background:var(--teal);transform-origin:left;transform:scaleX(0)}}
