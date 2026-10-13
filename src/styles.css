@@ -249,3 +249,5 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 @media(prefers-reduced-motion:reduce){.stamp-ring{animation:none}}
 @media(max-width:1023px){.hero .location-stamp{width:104px;height:104px}}
 @media(max-width:639px){.hero .location-stamp{width:92px;height:92px}}
+/* Mobile hero: headline and CTAs first so ad traffic sees the offer above the fold; illustration follows. */
+@media(max-width:639px){.hero-content{order:0}.hero-text{padding:28px 0 8px}.hero .hero-stage{order:1;height:300px;margin:24px 20px 0}.hero .photo-note{order:2}.hero .location-stamp{top:auto;bottom:230px;left:28px}}
