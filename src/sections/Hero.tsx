@@ -8,23 +8,88 @@ import {
   CheckCircle2,
   ArrowDown,
 } from "lucide-react";
-import heroSmile from "@/assets/hero-smile.jpg";
+import { useRef } from "react";
+import heroArt from "@/assets/hero-illustration.webp";
 import { Cta, WHATSAPP } from "./shared";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { track } from "@/lib/marketing";
 import type { Copy } from "@/content/types";
 const ICONS = [CalendarCheck, Hotel, UserCheck, Languages];
+const HEADER_HEIGHT = 91;
 export function Hero({ c }: { c: Copy }) {
+  const root = useRef<HTMLElement>(null);
+  const frame = useRef<HTMLDivElement>(null);
+  useGSAP(
+    () => {
+      const el = root.current!;
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-line]", {
+          yPercent: 115,
+          duration: 1.2,
+          stagger: 0.14,
+          ease: "power4.out",
+        });
+        gsap.from("[data-hero-in]", {
+          y: 30,
+          autoAlpha: 0,
+          duration: 1,
+          stagger: 0.09,
+          delay: 0.5,
+          ease: "power3.out",
+        });
+        gsap.from(".hand-line path", {
+          strokeDashoffset: 1,
+          duration: 1.1,
+          delay: 1.1,
+          ease: "power2.inOut",
+        });
+        gsap.from(frame.current, {
+          clipPath: "inset(100% 0% 0% 0%)",
+          duration: 1.6,
+          ease: "power4.inOut",
+        });
+        gsap.from(".hero-frame img", { scale: 1.25, duration: 2.2, ease: "power3.out" });
+      });
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const scrollOut = {
+          trigger: el,
+          start: `top ${HEADER_HEIGHT}px`,
+          end: "bottom top",
+          scrub: true,
+        };
+        gsap.to(".hero-frame img", {
+          yPercent: 10,
+          ease: "none",
+          scrollTrigger: scrollOut,
+        });
+        gsap.to(".hero-text", {
+          yPercent: -10,
+          autoAlpha: 0.15,
+          ease: "none",
+          scrollTrigger: scrollOut,
+        });
+      });
+      // Content stays hidden by CSS until the entrance tweens above have taken over.
+      el.setAttribute("data-motion", "ready");
+      return () => mm.revert();
+    },
+    { scope: root },
+  );
   return (
     <>
-      <section id="top" className="hero" aria-labelledby="hero-title">
-        <img
-          className="hero-photo"
-          src={heroSmile}
-          alt=""
-          fetchPriority="high"
-          width={1920}
-          height={1080}
-        />
+      <section
+        id="top"
+        ref={root}
+        className="hero"
+        data-motion="pending"
+        aria-labelledby="hero-title"
+      >
+        <div className="hero-stage" aria-hidden="true">
+          <div ref={frame} className="hero-frame">
+            <img src={heroArt} alt="" width={1152} height={1536} fetchPriority="high" />
+          </div>
+        </div>
         <div className="location-stamp" aria-hidden="true">
           <small>AGADIR</small>
           <span className="serif">Maroc</span>
@@ -32,12 +97,16 @@ export function Hero({ c }: { c: Copy }) {
         </div>
         <div className="container-wide hero-content">
           <div className="hero-text">
-            <span className="eyebrow">{c.hero.label}</span>
+            <span className="eyebrow" data-hero-in>
+              {c.hero.label}
+            </span>
             <h1 id="hero-title">
-              {c.hero.lines[0]}
-              <br />
-              {c.hero.lines[1]}
-              <span className="serif">
+              {c.hero.lines.map((line) => (
+                <span key={line} className="reveal-line">
+                  <span data-line>{line}</span>
+                </span>
+              ))}
+              <span className="serif" data-hero-in>
                 {c.hero.accent}
                 <svg
                   className="hand-line"
@@ -45,12 +114,14 @@ export function Hero({ c }: { c: Copy }) {
                   preserveAspectRatio="none"
                   aria-hidden="true"
                 >
-                  <path d="M2 7 C60 1 160 1 298 5" />
+                  <path d="M2 7 C60 1 160 1 298 5" pathLength={1} />
                 </svg>
               </span>
             </h1>
-            <p className="hero-description">{c.hero.description}</p>
-            <div className="hero-actions">
+            <p className="hero-description" data-hero-in>
+              {c.hero.description}
+            </p>
+            <div className="hero-actions" data-hero-in>
               <Cta section="hero">{c.hero.cta}</Cta>
               <a
                 className="line-button brand-button-ghost inline-flex items-center justify-center"
@@ -63,7 +134,7 @@ export function Hero({ c }: { c: Copy }) {
                 {c.whatsapp}
               </a>
             </div>
-            <div className="hero-reassurance">
+            <div className="hero-reassurance" data-hero-in>
               <span>
                 <CheckCircle2 />
                 {c.noCommitment}

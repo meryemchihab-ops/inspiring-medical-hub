@@ -30,14 +30,14 @@ export function Heading({
   accent,
 }: {
   id: string;
-  label: string;
+  label?: string;
   title: string;
   accent: string;
 }) {
   return (
     <>
-      <span className="eyebrow">{label}</span>
-      <h2 id={id} className="section-heading mt-5">
+      {label && <span className="eyebrow">{label}</span>}
+      <h2 id={id} className={label ? "section-heading mt-5" : "section-heading"}>
         {title}
         <br />
         <span className="serif">{accent}</span>

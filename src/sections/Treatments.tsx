@@ -1,25 +1,131 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
-import smileDetail from "@/assets/smile-detail.jpg";
-import deco01 from "@/assets/deco/deco-01.webp";
-import deco02 from "@/assets/deco/deco-02.webp";
-import { Cta, Deco, Heading } from "./shared";
+import facettes from "@/assets/treatments/1-facettes.webp";
+import implants from "@/assets/treatments/2-implants.webp";
+import smileDesign from "@/assets/treatments/3-digital-smile-design.webp";
+import zirconium from "@/assets/treatments/4-couronnes-zirconium.webp";
+import ceramique from "@/assets/treatments/5-couronnes-ceramique.webp";
+import aligneurs from "@/assets/treatments/6-aligneurs.webp";
+import blanchiment from "@/assets/treatments/7-blanchiment.webp";
+import { Cta } from "./shared";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { scrollToY } from "@/lib/smooth-scroll";
 import type { Copy } from "@/content/types";
+
+const HEADER_HEIGHT = 91;
+// One illustration per treatment, in the same order as the content items.
+const ILLUSTRATIONS = [facettes, implants, smileDesign, zirconium, ceramique, aligneurs, blanchiment];
+
+function Words({ children }: { children: string }) {
+  return children.split(" ").map((word, i, all) => (
+    <span key={i} className="word">
+      {word}
+      {i < all.length - 1 ? " " : ""}
+    </span>
+  ));
+}
+
 export function Treatments({ c }: { c: Copy }) {
   const [open, setOpen] = useState(0);
   const t = c.treatments;
+  const root = useRef<HTMLElement>(null);
+  const pin = useRef<ScrollTrigger | null>(null);
+
+  useGSAP(
+    () => {
+      const bar = root.current!.querySelector<HTMLElement>(".treatment-progress span")!;
+      const count = t.items.length;
+      const progress = { value: 0 };
+      // Ease the progress bar towards the scroll position instead of jumping.
+      const follow = (value: number) =>
+        gsap.to(progress, {
+          value,
+          duration: 0.5,
+          ease: "power2.out",
+          overwrite: true,
+          onUpdate: () => {
+            bar.style.transform = `scaleX(${progress.value})`;
+          },
+        });
+
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".word",
+          { opacity: 0.18 },
+          {
+            opacity: 1,
+            stagger: 0.12,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".treatment-stage",
+              start: "top 85%",
+              end: "top 25%",
+              scrub: true,
+            },
+          },
+        );
+      });
+      // Desktop: the section pins briefly and scroll drives the active treatment and its illustration.
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const st = ScrollTrigger.create({
+          trigger: ".treatment-stage",
+          start: `top ${HEADER_HEIGHT}px`,
+          end: () => `+=${Math.round(window.innerHeight * 1.2)}`,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            follow(self.progress);
+            setOpen(Math.min(count - 1, Math.floor(self.progress * count)));
+          },
+        });
+        pin.current = st;
+        return () => {
+          pin.current = null;
+        };
+      });
+      return () => mm.revert();
+    },
+    { scope: root },
+  );
+
+  const select = (i: number) => {
+    const st = pin.current;
+    if (!st) return setOpen(open === i ? -1 : i);
+    // Pinned: jump to the middle of that treatment's slice of the scroll.
+    scrollToY(st.start + ((i + 0.5) / t.items.length) * (st.end - st.start));
+  };
+
   return (
-    <section id="soins" aria-labelledby="treatments-title" className="section-pad deco-host">
-      <Deco src={deco01} name="wave" w={2400} h={300} />
-      <Deco src={deco02} name="blob" w={1200} h={1200} />
-      <div className="container-wide">
-        <div className="section-top">
-          <div>
-            <Heading id="treatments-title" label={t.label} title={t.title} accent={t.accent} />
+    <section id="soins" ref={root} aria-labelledby="treatments-title">
+      <div className="treatment-stage">
+        <div className="container-wide">
+          <div className="treatment-head">
+            <span className="eyebrow">{t.label}</span>
+            <h2 id="treatments-title" className="section-heading mt-5">
+              <Words>{t.title}</Words>
+              <br />
+              <span className="serif">
+                <Words>{t.accent}</Words>
+              </span>
+            </h2>
+            <p>{t.intro}</p>
           </div>
-          <p>{t.intro}</p>
-        </div>
-        <div className="treatment-layout">
+          <div className="treatment-visual" aria-hidden="true">
+            {ILLUSTRATIONS.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt=""
+                width={900}
+                height={900}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                data-on={i === Math.max(open, 0)}
+              />
+            ))}
+          </div>
           <div className="treatment-list">
             {t.items.map((it, i) => {
               const on = open === i;
@@ -31,7 +137,7 @@ export function Treatments({ c }: { c: Copy }) {
                       className="treatment-trigger"
                       aria-expanded={on}
                       aria-controls={`tr-${i}`}
-                      onClick={() => setOpen(on ? -1 : i)}
+                      onClick={() => select(i)}
                     >
                       <span className="treatment-number">0{i + 1}</span>
                       <strong>
@@ -57,19 +163,14 @@ export function Treatments({ c }: { c: Copy }) {
                 </div>
               );
             })}
-            <p className="mt-6 text-xs" style={{ color: "var(--slate)" }}>
-              {t.note}
-            </p>
+            <p className="treatment-note">{t.note}</p>
           </div>
-          <div className="treatment-visual">
-            <img src={smileDetail} alt="" loading="lazy" width={800} height={860} />
-            <div className="visual-caption">
-              <p className="serif" style={{ fontSize: 29, color: "inherit" }}>
-                {t.caption}
-              </p>
-              <p>{c.footer.illustrations}</p>
-            </div>
+          <div className="visual-caption">
+            <p className="serif">{t.caption}</p>
           </div>
+        </div>
+        <div className="treatment-progress" aria-hidden="true">
+          <span />
         </div>
       </div>
     </section>

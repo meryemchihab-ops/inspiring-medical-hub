@@ -1,70 +1,49 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import {
   ArrowUpRight,
   CheckCircle2,
   LockKeyhole,
-  Paperclip,
   UserRound,
   MessageCircle,
 } from "lucide-react";
-import deco12 from "@/assets/deco/deco-12.webp";
 import deco13 from "@/assets/deco/deco-13.webp";
 import { Deco } from "./shared";
 import { Button } from "@/components/ui/button";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
+import { useScrollReveal } from "@/lib/reveal";
 import type { Copy } from "@/content/types";
 export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
   const submit = useServerFn(submitConsultation);
+  const root = useRef<HTMLElement>(null);
+  useScrollReveal(root, ".booking-copy > *", { y: 36, tilt: false, stagger: 0.08 });
+  useScrollReveal(root, ".booking-form", { y: 56, tilt: false });
   const [busy, setBusy] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [file, setFile] = useState<File | null>(null);
   const [started, setStarted] = useState(false);
   async function send(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     const fd = new FormData(e.currentTarget);
+    const treatments = fd.getAll("treatment").map(String);
+    if (treatments.length === 0) {
+      setError(c.booking.treatmentError);
+      return;
+    }
     setBusy(true);
     try {
-      let attachment:
-        | { name: string; type: "image/jpeg" | "image/png" | "application/pdf"; base64: string }
-        | undefined;
-      if (file) {
-        if (
-          file.size > 5 * 1024 * 1024 ||
-          !["image/jpeg", "image/png", "application/pdf"].includes(file.type)
-        ) {
-          setError(c.booking.fileError);
-          return;
-        }
-        const base64 = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            if (typeof reader.result === "string") resolve(reader.result.split(",")[1] ?? "");
-            else reject(new Error("File"));
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
-        attachment = {
-          name: file.name,
-          type: file.type as "image/jpeg" | "image/png" | "application/pdf",
-          base64,
-        };
-      }
       await submit({
         data: {
           first_name: String(fd.get("first_name")),
           phone: String(fd.get("dial")) + String(fd.get("phone")),
-          treatment: String(fd.get("treatment")),
+          treatment: treatments.join(", "),
           preferred_month: String(fd.get("month")),
           language: c.language,
           consent: true,
           attribution: getAttribution(),
           website: String(fd.get("website") ?? ""),
-          file: attachment,
         },
       });
       setSuccess(true);
@@ -82,11 +61,11 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
   }
   return (
     <section
+      ref={root}
       id="reserver"
       aria-labelledby="booking-title"
       className="booking-section section-pad deco-host"
     >
-      <Deco src={deco12} name="aurora" w={2400} h={1200} />
       <Deco src={deco13} name="arch" w={1600} h={1104} />
       <div className="container-wide booking-layout">
         <div className="booking-copy">
@@ -101,7 +80,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
             <UserRound />
             <div>
               {c.booking.coordinator}
-              <div className="mt-2 flex items-center gap-2 text-[10px] text-teal-light">
+              <div className="mt-2 flex items-center gap-2 text-[10px] text-teal-deep">
                 <span className="live-dot" />
                 {c.hero.response}
               </div>
@@ -194,38 +173,27 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                       />
                     </div>
                   </div>
-                  <div className="form-field">
-                    <label htmlFor="treatment">{c.booking.treatment}</label>
-                    <select id="treatment" name="treatment" required defaultValue="">
-                      <option value="" disabled>
-                        {c.booking.select}
-                      </option>
+                  <fieldset className="form-field full">
+                    <legend>
+                      {c.booking.treatment} <small>{c.booking.select}</small>
+                    </legend>
+                    <div className="treatment-options">
                       {c.treatments.items.map((t) => (
-                        <option key={t.name}>{t.name}</option>
+                        <label key={t.name} className="treatment-option">
+                          <input type="checkbox" name="treatment" value={t.name} />
+                          <span>{t.name}</span>
+                        </label>
                       ))}
-                    </select>
-                  </div>
-                  <div className="form-field">
-                    <label htmlFor="month">{c.booking.month}</label>
-                    <input type="month" id="month" name="month" min="2026-10" />
-                  </div>
+                    </div>
+                  </fieldset>
                   <div className="form-field full">
-                    <label className="upload-label" htmlFor="attachment">
-                      <Paperclip />
-                      <div>
-                        {file ? file.name : c.booking.file}
-                        <small>{c.booking.fileHint}</small>
-                      </div>
-                    </label>
+                    <label htmlFor="month">{c.booking.month}</label>
                     <input
-                      className="sr-only"
-                      type="file"
-                      id="attachment"
-                      accept="image/jpeg,image/png,application/pdf"
-                      onChange={(e) => {
-                        setFile(e.target.files?.[0] ?? null);
-                        setError("");
-                      }}
+                      type="date"
+                      id="month"
+                      name="month"
+                      min={new Date().toISOString().slice(0, 10)}
+                      suppressHydrationWarning
                     />
                   </div>
                 </div>
