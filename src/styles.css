@@ -269,3 +269,9 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 .treatment-visual{overflow:hidden;border-radius:20px;background:var(--mist)}
 .treatment-visual img{object-fit:cover}
 @media(min-width:1024px){.treatment-visual{border-radius:999px 999px 0 0;box-shadow:var(--shadow-soft)}}
+/* Desktop hero grows with its content (long headlines, the reviews badge) instead of clipping it. */
+@media(min-width:1024px){.hero{height:auto;max-height:none;min-height:clamp(540px,calc(100svh - 260px),660px);display:flex;flex-direction:column}.hero-content{flex:1;height:auto}.hero-text{padding-block:40px}}
+/* Treatments start right under the trust strip instead of floating in the middle of the pinned stage. */
+@media(min-width:1024px){.treatment-stage{align-items:flex-start;padding-block:40px 32px;height:auto;min-height:calc(100svh - 91px)}}
+@media(min-width:640px) and (max-width:1023px){.treatment-stage{padding-block:56px}}
+@media(max-width:639px){.treatment-stage{padding-block:44px}}
