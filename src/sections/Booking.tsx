@@ -7,7 +7,7 @@ import {
   UserRound,
   MessageCircle,
 } from "lucide-react";
-import deco13 from "@/assets/deco/deco-13.webp";
+import logoMark from "@/assets/logo-mark.png";
 import { Deco, WHATSAPP } from "./shared";
 import { Button } from "@/components/ui/button";
 import { submitConsultation } from "@/lib/consultation.functions";
@@ -85,7 +85,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
       aria-labelledby="booking-title"
       className="booking-section section-pad deco-host"
     >
-      <Deco src={deco13} name="arch" w={1600} h={1104} />
+      <Deco src={logoMark} name="mark" w={320} h={165} />
       <div className="container-wide booking-layout">
         <div className="booking-copy">
           <span className="eyebrow">{c.booking.label}</span>

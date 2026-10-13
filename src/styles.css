@@ -56,10 +56,10 @@
 @media(max-width:1023px){.deco-blob{width:300px;right:-120px}.deco-palm{width:220px}.deco-sparkle{width:190px}.deco-rings{width:520px;right:-200px;top:-200px}.clinic-picture .deco-stamp{width:120px;height:120px;right:-20px;top:-30px}.deco-route{width:min(420px,45%)}}
 @media(max-width:639px){.deco-wave{opacity:.7}.deco-blob{width:220px;top:40px;opacity:.22}.deco-border{width:calc(100% - 40px);top:0}.deco-palm{width:150px;right:-50px;bottom:-10px;opacity:.45}.deco-sparkle{width:120px;top:14px;right:2%;opacity:.8}.deco-route{position:relative;display:block;left:auto;bottom:auto;width:min(300px,80%);margin:20px 0 0 20px}.deco-rings{width:400px;right:-180px;top:-150px}.deco-dune{height:64px}.clinic-picture .deco-stamp{width:96px;height:96px;right:-6px;top:-24px}.deco-float{width:170px;margin-top:22px}}
 @media(min-width:640px) and (max-width:1023px){.pack-card.featured{grid-column:1/-1}}
-.deco-arch{left:290px;bottom:-40px;width:820px;opacity:.4;filter:grayscale(1) brightness(0);-webkit-mask-image:linear-gradient(to right,transparent 0,#000 30%);mask-image:linear-gradient(to right,transparent 0,#000 30%)}
-@media(max-width:1180px){.deco-arch{left:200px;width:700px}}
-@media(max-width:1023px){.deco-arch{left:auto;right:-40px;top:50px;bottom:auto;width:380px;opacity:.2;-webkit-mask-image:none;mask-image:none}}
-@media(max-width:639px){.deco-arch{right:-70px;top:120px;width:300px;opacity:.14}}
+
+
+
+
 
 .treatment-trigger strong,.treatment-number{transition:color .3s}
 .treatment-active .treatment-trigger>svg{transform:rotate(135deg)}
@@ -260,3 +260,7 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 .google-stars::before{content:"★★★★★";letter-spacing:1px;font-size:15px;background:linear-gradient(90deg,#FBBC04 var(--fill),var(--border) var(--fill));-webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-width:639px){.google-badge{display:flex;width:fit-content;margin:18px auto 0}}
 @media(min-width:640px) and (max-width:1023px){.hero{height:auto;min-height:650px}.hero-content{padding-bottom:48px}}
+/* Booking: faint Medical Bay mark fills the space under the contact column. */
+.deco-mark{left:max(56px,calc((100vw - 1280px)/2 + 0px));bottom:44px;width:420px;opacity:.08}
+@media(max-width:1023px){.deco-mark{left:32px;bottom:60px;width:300px}}
+@media(max-width:639px){.deco-mark{display:none}}
