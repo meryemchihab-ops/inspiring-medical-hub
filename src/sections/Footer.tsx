@@ -2,11 +2,9 @@ import logoMark from "@/assets/logo-mark.png";
 import { MapPin, ArrowUpRight } from "lucide-react";
 import pebbles from "@/assets/deco/corner-pebbles.webp";
 import { Button } from "@/components/ui/button";
-import { Deco } from "./shared";
+import { Deco, GOOGLE_PLACE } from "./shared";
 import type { Copy } from "@/content/types";
 const ANCHORS = ["#soins", "#parcours", "#faq"];
-const MAP_PLACE =
-  "https://www.google.com/maps/place/MEDICAL+BAY/@30.4013031,-9.5850907,16z/data=!4m6!3m5!1s0xdb3b7b2e1d594fb:0x5d7f0a6bf528be4a!8m2!3d30.4013031!4d-9.5850907";
 const MAP_EMBED = "https://www.google.com/maps?q=MEDICAL+BAY+Agadir@30.4013031,-9.5850907&z=16&output=embed";
 
 function FooterMap({ c }: { c: Copy }) {
@@ -25,7 +23,7 @@ function FooterMap({ c }: { c: Copy }) {
         <div>
           <h3>{f.mapTitle}</h3>
           <p>{f.address}</p>
-          <a href={MAP_PLACE} target="_blank" rel="noreferrer" className="text-link">
+          <a href={GOOGLE_PLACE} target="_blank" rel="noreferrer" className="text-link">
             {f.mapOpen} <ArrowUpRight size={14} />
           </a>
         </div>
@@ -65,7 +63,7 @@ export function Footer({ c, onLegal }: { c: Copy; onLegal: () => void }) {
             <address className="footer-contact not-italic">
               <a href="tel:+212668686800">+212 668 68 68 00</a>
               <a href="mailto:contact@medicalbay.ma">contact@medicalbay.ma</a>
-              <a href={MAP_PLACE} target="_blank" rel="noreferrer">
+              <a href={GOOGLE_PLACE} target="_blank" rel="noreferrer">
                 {c.footer.address}
               </a>
               <a
