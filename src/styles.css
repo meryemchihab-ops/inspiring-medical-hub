@@ -264,3 +264,8 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 .deco-mark{left:max(56px,calc((100vw - 1280px)/2 + 0px));bottom:44px;width:420px;opacity:.08}
 @media(max-width:1023px){.deco-mark{left:32px;bottom:60px;width:300px}}
 @media(max-width:639px){.deco-mark{display:none}}
+/* Real photography: hero keeps the woman in frame; treatment photos sit in the same arch as the hero. */
+.hero-frame img{object-position:72% 40%}
+.treatment-visual{overflow:hidden;border-radius:20px;background:var(--mist)}
+.treatment-visual img{object-fit:cover}
+@media(min-width:1024px){.treatment-visual{border-radius:999px 999px 0 0;box-shadow:var(--shadow-soft)}}

@@ -8,7 +8,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useRef, type CSSProperties } from "react";
-import heroArt from "@/assets/hero-illustration.webp";
+import heroArt from "@/assets/hero-photo.webp";
 import stamp from "@/assets/agadir-stamp.webp";
 import { Cta, GOOGLE_RATING, GOOGLE_REVIEWS, GOOGLE_REVIEW_COUNT, WHATSAPP } from "./shared";
 import { gsap, useGSAP } from "@/lib/gsap";
