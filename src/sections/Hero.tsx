@@ -87,7 +87,7 @@ export function Hero({ c }: { c: Copy }) {
       >
         <div className="hero-stage" aria-hidden="true">
           <div ref={frame} className="hero-frame">
-            <img src={heroArt} alt="" width={1200} height={1608} fetchPriority="high" />
+            <img src={heroArt} alt="" width={896} height={1200} fetchPriority="high" />
           </div>
         </div>
         <div className="location-stamp" aria-hidden="true">
