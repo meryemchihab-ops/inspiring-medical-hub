@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import facettes from "@/assets/treatments/1-facettes.webp";
 import implants from "@/assets/treatments/2-implants.webp";
-import smileDesign from "@/assets/treatments/3-digital-smile-design.webp";
+import protheseTotale from "@/assets/treatments/3-prothese-totale.webp";
 import zirconium from "@/assets/treatments/4-couronnes-zirconium.webp";
 import ceramique from "@/assets/treatments/5-couronnes-ceramique.webp";
 import aligneurs from "@/assets/treatments/6-aligneurs.webp";
@@ -14,7 +14,7 @@ import type { Copy } from "@/content/types";
 
 const HEADER_HEIGHT = 91;
 // One illustration per treatment, in the same order as the content items.
-const ILLUSTRATIONS = [facettes, implants, smileDesign, zirconium, ceramique, aligneurs, blanchiment];
+const ILLUSTRATIONS = [facettes, implants, protheseTotale, zirconium, ceramique, aligneurs, blanchiment];
 
 function Words({ children }: { children: string }) {
   return children.split(" ").map((word, i, all) => (

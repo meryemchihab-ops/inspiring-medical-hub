@@ -5,6 +5,7 @@ import logoMark from "@/assets/logo-mark.png";
 import noPaymentBadge from "@/assets/badge-devis-gratuit.webp";
 import { Deco, WHATSAPP, WhatsAppIcon } from "./shared";
 import { Button } from "@/components/ui/button";
+import { DialCodePicker } from "@/components/dial-code-picker";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
 import { useScrollReveal } from "@/lib/reveal";
@@ -206,20 +207,12 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                   <div className="form-field">
                     <label htmlFor="phone">{c.booking.phone}</label>
                     <div className="phone-input">
-                      <select
+                      <DialCodePicker
                         name="dial"
-                        aria-label={c.language === "fr" ? "Indicatif pays" : "Country dial code"}
-                        defaultValue={c.language === "fr" ? "+33" : "+44"}
-                      >
-                        <option value="+33">FR +33</option>
-                        <option value="+44">UK +44</option>
-                        <option value="+212">MA +212</option>
-                        <option value="+32">BE +32</option>
-                        <option value="+41">CH +41</option>
-                        <option value="+1">US +1</option>
-                        <option value="+49">DE +49</option>
-                        <option value="+34">ES +34</option>
-                      </select>
+                        language={c.language}
+                        defaultIso={c.language === "fr" ? "FR" : "GB"}
+                        labels={c.booking.dialPicker}
+                      />
                       <input
                         id="phone"
                         name="phone"
