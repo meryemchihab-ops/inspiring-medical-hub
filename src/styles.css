@@ -167,7 +167,7 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 .treatment-option input:focus-visible+span{outline:2px solid var(--teal-deep);outline-offset:2px}
 .hero .hero-stage{inset:40px max(56px,calc((100vw - 1280px)/2)) 40px auto;width:min(44%,560px);mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none;perspective:none}
 .hero-frame{width:100%;height:100%;overflow:hidden;border-radius:999px 999px 0 0;background:var(--mist);box-shadow:var(--shadow-soft)}
-.hero-frame img{width:100%;height:115%;margin-top:-7%;object-fit:cover;object-position:78% center;display:block;will-change:transform}
+.hero-frame img{width:100%;height:115%;margin-top:-7%;object-fit:cover;object-position:50% 50%;display:block;will-change:transform}
 .hero .location-stamp{right:calc(max(56px,calc((100vw - 1280px)/2)) + min(44%,560px) - 60px);top:auto;bottom:120px}
 .hero .photo-note{right:calc(max(56px,calc((100vw - 1280px)/2)) + 24px);bottom:64px}
 @media(max-width:1023px){.hero .hero-stage{inset:32px 32px 32px auto;width:40%}.hero .location-stamp{right:calc(32px + 40% - 46px);bottom:90px}.hero .photo-note{right:44px;bottom:50px}}
@@ -205,7 +205,7 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 .faq-item[data-state=open]{background:color-mix(in oklab,var(--card) 8%,transparent);box-shadow:none}
 .faq-list .acc-content{color:var(--silver)}
 .faq-list .faq-item button:focus-visible{outline:2px solid var(--teal-light);outline-offset:-2px}
-.hero-frame img{object-position:62% 30%}
+.hero-frame img{object-position:50% 50%}
 .footer-logo{display:inline-flex;align-items:center;gap:12px;width:auto;color:var(--card)}
 .footer-logo img{height:44px;width:auto}
 .footer-logo strong{display:block;font-family:var(--font-display);font-weight:700;font-size:18px;white-space:nowrap}
@@ -264,7 +264,7 @@ html.lenis,html.lenis body{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!
 @media(max-width:1023px){.deco-mark{left:32px;bottom:60px;width:300px}}
 @media(max-width:639px){.deco-mark{display:none}}
 /* Real photography: hero keeps the woman in frame; treatment photos sit in the same arch as the hero. */
-.hero-frame img{object-position:72% 40%}
+.hero-frame img{object-position:50% 50%}
 .treatment-visual{overflow:hidden;border-radius:20px;background:var(--mist)}
 .treatment-visual img{object-fit:cover}
 @media(min-width:1024px){.treatment-visual{border-radius:999px 999px 0 0;box-shadow:var(--shadow-soft)}}

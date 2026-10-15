@@ -8,7 +8,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useRef, type CSSProperties } from "react";
-import heroArt from "@/assets/hero-photo.webp";
+import heroArt from "@/assets/hero-agadir-beach.webp";
 import stamp from "@/assets/agadir-stamp.webp";
 import { Cta, GOOGLE_RATING, GOOGLE_REVIEWS, GOOGLE_REVIEW_COUNT, WHATSAPP } from "./shared";
 import { gsap, useGSAP } from "@/lib/gsap";
@@ -87,7 +87,7 @@ export function Hero({ c }: { c: Copy }) {
       >
         <div className="hero-stage" aria-hidden="true">
           <div ref={frame} className="hero-frame">
-            <img src={heroArt} alt="" width={1152} height={1536} fetchPriority="high" />
+            <img src={heroArt} alt="" width={1200} height={1608} fetchPriority="high" />
           </div>
         </div>
         <div className="location-stamp" aria-hidden="true">
