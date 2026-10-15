@@ -10,7 +10,7 @@ import {
 import { useRef, type CSSProperties } from "react";
 import heroArt from "@/assets/hero-agadir-beach.webp";
 import stamp from "@/assets/agadir-stamp.webp";
-import { Cta, GOOGLE_RATING, GOOGLE_REVIEWS, GOOGLE_REVIEW_COUNT, WHATSAPP } from "./shared";
+import { Cta, GOOGLE_RATING, GOOGLE_REVIEWS, WHATSAPP } from "./shared";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { track } from "@/lib/marketing";
 import type { Copy } from "@/content/types";
@@ -168,9 +168,7 @@ export function Hero({ c }: { c: Copy }) {
                 style={{ "--fill": `${(GOOGLE_RATING / 5) * 100}%` } as CSSProperties}
                 aria-hidden="true"
               />
-              <span>
-                {GOOGLE_REVIEW_COUNT} {c.hero.reviews}
-              </span>
+              <span className="sr-only">{c.hero.reviews}</span>
             </a>
           </div>
         </div>
