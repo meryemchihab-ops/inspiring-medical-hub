@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { COUNTRIES, PINNED, flagOf } from "@/lib/countries";
+import { COUNTRIES, PHONE_FORMAT, PINNED, flagOf } from "@/lib/countries";
 
 const fold = (s: string) =>
   s
@@ -22,11 +22,12 @@ interface Props {
   language: "fr" | "en";
   defaultIso: string;
   labels: { trigger: string; search: string; empty: string; pinned: string; all: string };
+  onSelect?: (iso: string) => void;
 }
 
 // Searchable country code picker: "fr", "France", "maroc" or "33" all find the right code.
 // The chosen code is submitted through a hidden input named `name`, e.g. "+33".
-export function DialCodePicker({ name, language, defaultIso, labels }: Props) {
+export function DialCodePicker({ name, language, defaultIso, labels, onSelect }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [iso, setIso] = useState(defaultIso);
@@ -69,6 +70,7 @@ export function DialCodePicker({ name, language, defaultIso, labels }: Props) {
     setIso(code);
     setOpen(false);
     setQuery("");
+    onSelect?.(code);
   };
   const row = (x: (typeof countries)[number]) => (
     <CommandItem key={x.iso} value={x.iso} onSelect={() => choose(x.iso)} className="dial-option">

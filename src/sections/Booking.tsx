@@ -6,6 +6,7 @@ import noPaymentBadge from "@/assets/badge-devis-gratuit.webp";
 import { Deco, WHATSAPP, WhatsAppIcon } from "./shared";
 import { Button } from "@/components/ui/button";
 import { DialCodePicker } from "@/components/dial-code-picker";
+import { PHONE_FORMAT } from "@/lib/countries";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
 import { useScrollReveal } from "@/lib/reveal";
@@ -45,6 +46,8 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
     },
     { scope: root },
   );
+  const defaultIso = c.language === "fr" ? "FR" : "GB";
+  const [dialIso, setDialIso] = useState(defaultIso);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [started, setStarted] = useState(false);
@@ -210,8 +213,9 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                       <DialCodePicker
                         name="dial"
                         language={c.language}
-                        defaultIso={c.language === "fr" ? "FR" : "GB"}
+                        defaultIso={defaultIso}
                         labels={c.booking.dialPicker}
+                        onSelect={setDialIso}
                       />
                       <input
                         id="phone"
@@ -220,7 +224,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                         autoComplete="tel-national"
                         required
                         pattern="[0-9 \(\)\-]{7,18}"
-                        placeholder="6 12 34 56 78"
+                        placeholder={PHONE_FORMAT[dialIso] ?? "612 345 678"}
                       />
                     </div>
                   </div>
