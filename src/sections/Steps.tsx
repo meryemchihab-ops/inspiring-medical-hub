@@ -27,7 +27,7 @@ export function Steps({ c }: { c: Copy }) {
             at,
           ).from(
             item.querySelector(".tl-card"),
-            { y: 28, autoAlpha: 0, duration: 0.7, ease: "power2.out" },
+            { y: 28, autoAlpha: 0, duration: 0.7, ease: "power2.out", clearProps: "transform" },
             at + 0.1,
           );
           const fill = item.querySelector(".tl-link > span");

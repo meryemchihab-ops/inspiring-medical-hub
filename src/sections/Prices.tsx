@@ -1,8 +1,11 @@
+import { Home, MapPin, Plane } from "lucide-react";
 import deco07 from "@/assets/deco/deco-07.webp";
 import { Cta, Deco } from "./shared";
 import type { Copy } from "@/content/types";
+const audienceIcons = [Plane, MapPin, Home];
 export function Prices({ c }: { c: Copy }) {
   const p = c.prices;
+  const number = new Intl.NumberFormat(c.language === "fr" ? "fr-FR" : "en-GB");
   return (
     <section
       id="tarifs"
@@ -10,59 +13,65 @@ export function Prices({ c }: { c: Copy }) {
       className="price-section section-pad deco-host"
     >
       <Deco src={deco07} name="rings" w={1100} h={1100} />
-      <div className="container-wide price-layout">
-        <div className="price-intro">
-          <span className="eyebrow" style={{ color: "var(--teal-light)" }}>
-            {p.label}
-          </span>
-          <h2 id="prices-title" className="section-heading">
-            {p.title}
-            <br />
-            <span className="serif">{p.accent}</span>
-          </h2>
-          <p>{p.intro}</p>
-          <div className="savings-number" aria-label={`${p.upTo} 70%`}>
-            <small
-              style={{
-                fontStyle: "normal",
-                fontFamily: "var(--font-display)",
-                fontSize: 12,
-                display: "block",
-              }}
-            >
-              {p.upTo}
-            </small>
-            70<small>%</small>
+      <div className="container-wide">
+        <div className="price-top">
+          <div className="price-intro">
+            <span className="eyebrow" style={{ color: "var(--teal-light)" }}>
+              {p.label}
+            </span>
+            <h2 id="prices-title" className="section-heading">
+              {p.title}
+              <br />
+              <span className="serif">{p.accent}</span>
+            </h2>
+            <p>{p.intro}</p>
+            <Cta section="prices" variant="brand">
+              {p.cta}
+            </Cta>
           </div>
-          <p>{p.saving}</p>
-          <Cta section="prices" variant="brand">
-            {p.cta}
-          </Cta>
+          <ul className="price-audience">
+            {p.audience.map((a, i) => {
+              const Icon = audienceIcons[i] ?? MapPin;
+              return (
+                <li key={a.title}>
+                  <Icon aria-hidden="true" />
+                  <div>
+                    <strong>{a.title}</strong>
+                    <span>{a.detail}</span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
-        <div>
-          {p.rows.map((r) => (
-            <div key={r.name} className="price-row">
-              <h3>{r.name}</h3>
-              <div className="bar-line">
-                <span>{p.europe}</span>
-                <div className="bar-track">
-                  <div className="bar-fill" style={{ width: "100%" }} />
-                </div>
-                <span className="price-value">{r.eu}</span>
-              </div>
-              <div className="bar-line">
-                <span>{p.morocco}</span>
-                <div className="bar-track">
-                  <div className="bar-fill morocco" style={{ width: `${r.ratio}%` }} />
-                </div>
-                <span className="price-value">{r.ma}</span>
-              </div>
+        <div className="price-board">
+          <div className="price-free">
+            <div>
+              <strong>{p.free}</strong>
+              <span>{p.freeDetail}</span>
             </div>
-          ))}
+            <span className="price-free-value">0 {p.currency}</span>
+          </div>
+          <p className="price-same">{p.same}</p>
+          <div className="price-groups">
+            {p.groups.map((g) => (
+              <div key={g.title} className="price-group">
+                <h3>{g.title}</h3>
+                <dl>
+                  {g.rows.map((r) => (
+                    <div key={r.name} className="price-item">
+                      <dt>{r.name}</dt>
+                      <dd>
+                        {number.format(r.price)} {p.currency}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
           <p className="price-footnote">
-            {p.footnote}
-            <br />
-            {p.source}
+            {p.footnote} {p.source}
           </p>
         </div>
       </div>

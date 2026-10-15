@@ -1,24 +1,49 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import {
-  ArrowUpRight,
-  CheckCircle2,
-  LockKeyhole,
-  UserRound,
-  MessageCircle,
-} from "lucide-react";
+import { ArrowUpRight, CheckCircle2, LockKeyhole, UserRound, MessageCircle } from "lucide-react";
 import logoMark from "@/assets/logo-mark.png";
+import noPaymentBadge from "@/assets/badge-devis-gratuit.webp";
 import { Deco, WHATSAPP } from "./shared";
 import { Button } from "@/components/ui/button";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
 import { useScrollReveal } from "@/lib/reveal";
+import { gsap, useGSAP } from "@/lib/gsap";
 import type { Copy } from "@/content/types";
 export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
   const submit = useServerFn(submitConsultation);
   const root = useRef<HTMLElement>(null);
   useScrollReveal(root, ".booking-copy > *", { y: 36, tilt: false, stagger: 0.08 });
   useScrollReveal(root, ".booking-form", { y: 56, tilt: false });
+  // The "no payment" stamp drops onto the form once it is in view, then sways gently.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const badge = ".form-badge";
+        if (!document.querySelector(badge)) return;
+        gsap.set(badge, { autoAlpha: 0, scale: 1.8, rotation: -40 });
+        gsap
+          .timeline({ scrollTrigger: { trigger: ".booking-form", start: "top 70%", once: true } })
+          .to(
+            badge,
+            { autoAlpha: 1, scale: 1, rotation: 8, duration: 0.7, ease: "back.out(1.8)" },
+            0.5,
+          )
+          .to(badge, { scale: 0.92, duration: 0.08, yoyo: true, repeat: 1, ease: "power1.inOut" })
+          .to(badge, {
+            rotation: -2,
+            y: -6,
+            duration: 2.6,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+          });
+      });
+      return () => mm.revert();
+    },
+    { scope: root },
+  );
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [started, setStarted] = useState(false);
@@ -34,15 +59,19 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
     }
     const firstName = String(fd.get("first_name")).trim();
     // "06 12 34 56 78" with +33 becomes "+33612345678", the international form WhatsApp expects.
-    const phone = String(fd.get("dial")) + String(fd.get("phone")).replace(/\D/g, "").replace(/^0+/, "");
+    const phone =
+      String(fd.get("dial")) + String(fd.get("phone")).replace(/\D/g, "").replace(/^0+/, "");
     const month = String(fd.get("month"));
+    const message = String(fd.get("message") ?? "").trim();
     const L = c.booking.waLabels;
     const sep = c.language === "fr" ? " : " : ": ";
     const date = month
-      ? new Date(`${month}T00:00`).toLocaleDateString(c.language === "fr" ? "fr-FR" : "en-GB", {
+      ? new Date(month).toLocaleString(c.language === "fr" ? "fr-FR" : "en-GB", {
+          weekday: "long",
           day: "numeric",
           month: "long",
-          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
         })
       : "";
     const text = [
@@ -52,6 +81,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
       `${L.phone}${sep}${phone}`,
       `${L.treatments}${sep}${treatments.join(", ")}`,
       ...(date ? [`${L.date}${sep}${date}`] : []),
+      ...(message ? [`${L.message}${sep}${message}`] : []),
     ].join("\n");
     const link = `${WHATSAPP}?text=${encodeURIComponent(text)}`;
     // Opened inside the submit handler itself so browsers treat it as user-initiated and do not block it.
@@ -69,6 +99,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
       data: {
         first_name: firstName,
         phone,
+        message,
         treatment: treatments.join(", "),
         preferred_month: month,
         language: c.language,
@@ -122,6 +153,18 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
           </a>
         </div>
         <div className="booking-form">
+          {/* The stamp's lettering is French, so the English page relies on the footnote instead. */}
+          {c.language === "fr" && (
+            <img
+              src={noPaymentBadge}
+              alt=""
+              aria-hidden="true"
+              width={180}
+              height={180}
+              loading="lazy"
+              className="form-badge"
+            />
+          )}
           {success ? (
             <div className="form-success" role="status">
               <CheckCircle2 />
@@ -204,11 +247,27 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                   <div className="form-field full">
                     <label htmlFor="month">{c.booking.month}</label>
                     <input
-                      type="date"
+                      type="datetime-local"
                       id="month"
                       name="month"
-                      min={new Date().toISOString().slice(0, 10)}
+                      aria-describedby="month-hint"
+                      min={`${new Date().toISOString().slice(0, 10)}T00:00`}
                       suppressHydrationWarning
+                    />
+                    <small id="month-hint" className="form-hint">
+                      {c.booking.callHint}
+                    </small>
+                  </div>
+                  <div className="form-field full">
+                    <label htmlFor="message">
+                      {c.booking.message} <small>({c.booking.optional})</small>
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows={3}
+                      maxLength={1000}
+                      placeholder={c.booking.messagePlaceholder}
                     />
                   </div>
                 </div>

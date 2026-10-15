@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequest } from '@tanstack/react-start/server';
 import { z } from 'zod';
-const requestSchema=z.object({first_name:z.string().trim().min(2).max(80),phone:z.string().regex(/^\+[0-9\s()-]{7,22}$/),treatment:z.string().min(2).max(400),preferred_month:z.string().max(20),language:z.enum(['fr','en']),consent:z.literal(true),attribution:z.record(z.string().max(200)),website:z.string().max(200).default(''),file:z.object({name:z.string().max(150),type:z.enum(['image/jpeg','image/png','application/pdf']),base64:z.string().max(7000000)}).optional()});
+const requestSchema=z.object({first_name:z.string().trim().min(2).max(80),phone:z.string().regex(/^\+[0-9\s()-]{7,22}$/),message:z.string().trim().max(1000).default(''),treatment:z.string().min(2).max(400),preferred_month:z.string().max(20),language:z.enum(['fr','en']),consent:z.literal(true),attribution:z.record(z.string().max(200)),website:z.string().max(200).default(''),file:z.object({name:z.string().max(150),type:z.enum(['image/jpeg','image/png','application/pdf']),base64:z.string().max(7000000)}).optional()});
 export const submitConsultation=createServerFn({method:'POST'}).inputValidator((data:unknown)=>requestSchema.parse(data)).handler(async({data})=>{
  if(data.website) throw new Error('Invalid request');
  const {supabaseAdmin}=await import('@/integrations/supabase/client.server');
@@ -28,6 +28,6 @@ export const submitConsultation=createServerFn({method:'POST'}).inputValidator((
  }
  const {data:row,error}=await supabaseAdmin.from('consultation_requests').insert({first_name:data.first_name,phone:data.phone,treatment:data.treatment,preferred_month:data.preferred_month,language:data.language,consent:true,attribution:data.attribution,attachment_path}).select('id').single();
  if(error || !row){if(attachment_path) await supabaseAdmin.storage.from('consultation-files').remove([attachment_path]);throw new Error('Request could not be saved');}
- try{const {notifyNewConsultation}=await import('@/lib/mailer.server');await notifyNewConsultation({id:row.id,first_name:data.first_name,phone:data.phone,treatment:data.treatment,preferred_month:data.preferred_month,language:data.language});}catch(e){console.error('Consultation email failed',e instanceof Error?e.message:e);}
+ try{const {notifyNewConsultation}=await import('@/lib/mailer.server');await notifyNewConsultation({id:row.id,first_name:data.first_name,phone:data.phone,message:data.message,treatment:data.treatment,preferred_month:data.preferred_month,language:data.language});}catch(e){console.error('Consultation email failed',e instanceof Error?e.message:e);}
  return {id:row.id};
 });

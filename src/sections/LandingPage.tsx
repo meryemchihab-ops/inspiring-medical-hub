@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
 import { Treatments } from "./Treatments";
+import { Prices } from "./Prices";
 import { Steps } from "./Steps";
 import { Faq } from "./Faq";
 import { Booking } from "./Booking";
@@ -27,6 +28,7 @@ export function LandingPage({ c }: { c: Copy }) {
         <ScrollStroke target={mainRef} />
         <Hero c={c} />
         <Treatments c={c} />
+        <Prices c={c} />
         <Steps c={c} />
         <Faq c={c} />
         <Booking c={c} onLegal={() => setLegal(true)} />

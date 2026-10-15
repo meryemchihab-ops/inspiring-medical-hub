@@ -4,6 +4,7 @@ type Consultation = {
   id: string;
   first_name: string;
   phone: string;
+  message: string;
   treatment: string;
   preferred_month: string;
   language: 'fr' | 'en';
@@ -28,7 +29,8 @@ export async function notifyNewConsultation(c: Consultation) {
     ['Prénom', c.first_name],
     ['WhatsApp', c.phone],
     ['Soins', c.treatment],
-    ['Date d’arrivée', c.preferred_month || '—'],
+    ['Disponible pour un appel', c.preferred_month ? c.preferred_month.replace('T', ' à ') : '—'],
+    ['Message', c.message || '—'],
     ['Langue', c.language.toUpperCase()],
     ['Référence', c.id],
   ];
