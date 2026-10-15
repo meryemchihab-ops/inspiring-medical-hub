@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { MessageCircle } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Heading, WHATSAPP } from "./shared";
+import { Heading, WHATSAPP, WhatsAppIcon } from "./shared";
 import { track } from "@/lib/marketing";
 import { useScrollReveal } from "@/lib/reveal";
 import type { Copy } from "@/content/types";
@@ -37,7 +36,7 @@ export function Faq({ c }: { c: Copy }) {
               rel="noreferrer"
               onClick={() => track("whatsapp_click", { section: "faq" })}
             >
-              <MessageCircle />
+              <WhatsAppIcon />
               {f.cta}
             </a>
           </Button>

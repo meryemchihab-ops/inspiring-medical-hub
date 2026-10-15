@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import welcomeArt from "@/assets/hero-agadir-beach.webp";
-import { Cta, WHATSAPP } from "./shared";
+import { Cta, WHATSAPP, WhatsAppIcon } from "./shared";
 import { track } from "@/lib/marketing";
 import type { Copy } from "@/content/types";
 const readConsent = () =>
@@ -66,7 +66,7 @@ export function Overlays({
         aria-label={c.whatsapp}
         onClick={() => track("whatsapp_click", { section: "float" })}
       >
-        <MessageCircle />
+        <WhatsAppIcon />
       </a>
       <div className="mobile-bottom">
         <Button asChild variant="line">
@@ -121,7 +121,7 @@ export function Overlays({
                   rel="noreferrer"
                   onClick={() => track("whatsapp_click", { section: "offer" })}
                 >
-                  <MessageCircle />
+                  <WhatsAppIcon />
                   {c.whatsapp}
                 </a>
               </Button>

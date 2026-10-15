@@ -1,9 +1,9 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowUpRight, CheckCircle2, LockKeyhole, UserRound, MessageCircle } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, LockKeyhole, UserRound } from "lucide-react";
 import logoMark from "@/assets/logo-mark.png";
 import noPaymentBadge from "@/assets/badge-devis-gratuit.webp";
-import { Deco, WHATSAPP } from "./shared";
+import { Deco, WHATSAPP, WhatsAppIcon } from "./shared";
 import { Button } from "@/components/ui/button";
 import { submitConsultation } from "@/lib/consultation.functions";
 import { getAttribution, track } from "@/lib/marketing";
@@ -172,7 +172,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
               <p>{c.booking.successDetail}</p>
               <Button asChild variant="brand">
                 <a href={waLink} target="_blank" rel="noreferrer">
-                  <MessageCircle />
+                  <WhatsAppIcon />
                   {c.booking.waSend}
                 </a>
               </Button>
@@ -297,7 +297,7 @@ export function Booking({ c, onLegal }: { c: Copy; onLegal: () => void }) {
                   </p>
                 )}
                 <Button type="submit" variant="brand">
-                  <MessageCircle />
+                  <WhatsAppIcon />
                   {c.booking.submit}
                 </Button>
                 <div className="form-footnote">
