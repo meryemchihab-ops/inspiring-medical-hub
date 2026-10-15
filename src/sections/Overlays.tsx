@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
-import { MessageCircle, X } from "lucide-react";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import welcomeArt from "@/assets/hero-agadir-beach.webp";
 import { Cta, WHATSAPP } from "./shared";
 import { track } from "@/lib/marketing";
 import type { Copy } from "@/content/types";
@@ -26,11 +33,17 @@ export function Overlays({
     let dismissed = false;
     try {
       dismissed = sessionStorage.getItem("mb_offer") === "1";
-    } catch {}
+    } catch {
+      // Storage can be blocked (private mode); the welcome then simply shows again.
+    }
     if (dismissed) return;
-    const t = window.setTimeout(() => setOffer(true), 30000);
+    // A short welcome a moment after arrival, once per browsing session.
+    const t = window.setTimeout(() => {
+      setOffer(true);
+      track("offer_view", { lang: c.language });
+    }, 2000);
     return () => window.clearTimeout(t);
-  }, []);
+  }, [c.language]);
   function choose(v: "accepted" | "declined") {
     document.cookie = `mb_consent=${v}; max-age=15552000; path=/; SameSite=Lax`;
     setConsent(true);
@@ -39,7 +52,9 @@ export function Overlays({
     setOffer(false);
     try {
       sessionStorage.setItem("mb_offer", "1");
-    } catch {}
+    } catch {
+      // Storage can be blocked (private mode); the welcome then simply shows again.
+    }
   }
   return (
     <>
@@ -66,7 +81,8 @@ export function Overlays({
         </Button>
         <Cta section="bottom">{c.quote}</Cta>
       </div>
-      {!consent && (
+      {/* Held back while the welcome modal is open so the two never overlap. */}
+      {!consent && !offer && (
         <div className="cookie-panel" role="dialog" aria-label="Cookies">
           <p>{c.consent.text}</p>
           <div className="cookie-panel-actions">
@@ -79,24 +95,40 @@ export function Overlays({
           </div>
         </div>
       )}
-      {offer && (
-        <aside className="offer-panel" aria-label={c.offer.title}>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="offer-close"
-            onClick={closeOffer}
-            aria-label={c.offer.close}
-          >
-            <X />
-          </Button>
-          <h3>{c.offer.title}</h3>
-          <p>{c.offer.text}</p>
-          <div onClick={closeOffer}>
-            <Cta section="offer">{c.offer.cta}</Cta>
+      <Dialog open={offer} onOpenChange={(open) => !open && closeOffer()}>
+        <DialogContent className="welcome-modal">
+          <img src={welcomeArt} alt="" width={896} height={1200} className="welcome-art" />
+          <div className="welcome-body">
+            <span className="eyebrow">{c.offer.label}</span>
+            <DialogHeader>
+              <DialogTitle className="welcome-title">{c.offer.title}</DialogTitle>
+              <DialogDescription className="welcome-text">{c.offer.text}</DialogDescription>
+            </DialogHeader>
+            <ul className="welcome-points">
+              {c.offer.points.map((p) => (
+                <li key={p}>
+                  <CheckCircle2 aria-hidden="true" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+            <div className="welcome-actions" onClick={closeOffer}>
+              <Cta section="offer">{c.offer.cta}</Cta>
+              <Button asChild variant="line">
+                <a
+                  href={WHATSAPP}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => track("whatsapp_click", { section: "offer" })}
+                >
+                  <MessageCircle />
+                  {c.whatsapp}
+                </a>
+              </Button>
+            </div>
           </div>
-        </aside>
-      )}
+        </DialogContent>
+      </Dialog>
       <Dialog open={legalOpen} onOpenChange={setLegalOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader>
