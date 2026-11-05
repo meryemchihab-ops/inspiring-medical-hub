@@ -62,7 +62,7 @@ export function Prices({ c }: { c: Copy }) {
                     <div key={r.name} className="price-item">
                       <dt>{r.name}</dt>
                       <dd>
-                        {number.format(r.price)} {p.currency}
+                        {typeof r.price === "number" ? number.format(r.price) : r.price} {p.currency}
                       </dd>
                     </div>
                   ))}

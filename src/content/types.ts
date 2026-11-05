@@ -4,7 +4,7 @@ export interface Copy {
  hero:{label:string;lines:string[];accent:string;description:string;cta:string;response:string;reviews:string;location:string};
  trust:{title:string;detail:string}[];
  treatments:{label:string;title:string;accent:string;intro:string;popular:string;items:{name:string;tagline:string;description:string}[];cta:string;caption:string;note:string};
- prices:{label:string;title:string;accent:string;intro:string;audience:{title:string;detail:string}[];same:string;free:string;freeDetail:string;currency:string;cta:string;footnote:string;source:string;groups:{title:string;rows:{name:string;price:number}[]}[]};
+ prices:{label:string;title:string;accent:string;intro:string;audience:{title:string;detail:string}[];same:string;free:string;freeDetail:string;currency:string;cta:string;footnote:string;source:string;groups:{title:string;rows:{name:string;price:number|string}[]}[]};
  smile:{label:string;title:string;accent:string;description:string;tabs:string[];details:string[];cta:string;disclaimer:string};
  steps:{label:string;title:string;accent:string;intro:string;cta:string;items:{title:string;description:string;deliverable:string}[]};
  stay:{label:string;title:string;accent:string;intro:string;cta:string;caption:string;note:string;included:string[]};
